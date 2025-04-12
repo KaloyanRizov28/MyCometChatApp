@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,17 @@ import {
   ActivityIndicator,
   Alert,
   Image,
-} from 'react-native';
-import { loginWithCometChat } from '../services/authService';
-import { COLORS } from '../theme/colors';
+} from "react-native";
+import { loginWithCometChat } from "../services/authService";
+import { COLORS } from "../theme/colors";
 
 const LoginScreen = ({ navigation }) => {
-  const [uid, setUid] = useState('');
+  const [uid, setUid] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!uid.trim()) {
-      Alert.alert('Error', 'Please enter a user ID');
+      Alert.alert("Error", "Please enter a user ID");
       return;
     }
 
@@ -26,10 +26,13 @@ const LoginScreen = ({ navigation }) => {
     try {
       await loginWithCometChat(uid.trim());
       setIsLoading(false);
-      navigation.replace('Home');
+      navigation.replace("HomeScreen");
     } catch (error) {
       setIsLoading(false);
-      Alert.alert('Login Failed', error.message || 'Failed to login. Please try again.');
+      Alert.alert(
+        "Login Failed",
+        error.message || "Failed to login. Please try again."
+      );
     }
   };
 
@@ -39,7 +42,7 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Welcome Back</Text>
         <Text style={styles.headerSubtitle}>Login to connect with friends</Text>
       </View>
-      
+
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>User ID</Text>
@@ -67,7 +70,7 @@ const LoginScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.registerLink}
-          onPress={() => navigation.navigate('Register')}
+          onPress={() => navigation.navigate("Register")}
         >
           <Text style={styles.registerText}>
             Don't have an account? <Text style={styles.linkText}>Register</Text>
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    alignItems: 'center',
+    alignItems: "center",
     shadowColor: COLORS.DARK,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.TEXT_LIGHT,
     marginBottom: 10,
   },
@@ -110,14 +113,14 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     padding: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   inputContainer: {
     marginBottom: 24,
   },
   inputLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: COLORS.TEXT_PRIMARY,
     marginBottom: 8,
   },
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.SECONDARY,
     borderRadius: 10,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 16,
     shadowColor: COLORS.DARK,
     shadowOffset: { width: 0, height: 2 },
@@ -145,11 +148,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.TEXT_LIGHT,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   registerLink: {
     marginTop: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   registerText: {
     color: COLORS.TEXT_PRIMARY,
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: COLORS.PRIMARY,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

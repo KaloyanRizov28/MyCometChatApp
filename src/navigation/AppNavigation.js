@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ActivityIndicator, View, Text, StyleSheet } from "react-native";
 
 // Screens
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import HomeScreen from '../screens/HomeScreen';
-import ChatScreen from '../screens/ChatScreen';
-import UsersListScreenn from '../screens/UserListScreen';
-import GroupsListScreen from '../screens/GroupsListScreen';
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import HomeScreen from "../screens/HomeScreen";
+import ChatScreen from "../screens/ChatScreen";
+import GroupsListScreen from "../screens/GroupsListScreen";
+import UserListScreen from "../screens/UserListScreen";
 
 // Auth Services
-import { initCometChat, checkAuthStatus } from '../services/authService';
+import { initCometChat, checkAuthStatus } from "../services/authService";
 
 // Theme
-import { COLORS } from '../theme/colors';
+import { COLORS } from "../theme/colors";
 
 const Stack = createStackNavigator();
 
@@ -30,18 +30,18 @@ const AuthStack = () => (
       },
       headerTintColor: COLORS.TEXT_LIGHT,
       headerTitleStyle: {
-        fontWeight: 'bold',
+        fontWeight: "bold",
       },
       cardStyle: { backgroundColor: COLORS.BACKGROUND },
     }}
   >
-    <Stack.Screen 
-      name="Login" 
-      component={LoginScreen} 
+    <Stack.Screen
+      name="Login"
+      component={LoginScreen}
       options={{ headerShown: false }}
     />
-    <Stack.Screen 
-      name="Register" 
+    <Stack.Screen
+      name="Register"
       component={RegisterScreen}
       options={{ headerShown: false }}
     />
@@ -58,29 +58,26 @@ const AppStack = () => (
       },
       headerTintColor: COLORS.TEXT_LIGHT,
       headerTitleStyle: {
-        fontWeight: 'bold',
+        fontWeight: "bold",
       },
       cardStyle: { backgroundColor: COLORS.BACKGROUND },
     }}
   >
-    <Stack.Screen 
-      name="Home" 
-      component={HomeScreen} 
+    <Stack.Screen
+      name="HomeScreen"
+      component={HomeScreen}
       options={{ headerShown: false }}
     />
-    <Stack.Screen 
-      name="Chat" 
-      component={ChatScreen} 
+    <Stack.Screen name="Chat" component={ChatScreen} />
+    <Stack.Screen
+      name="UsersList"
+      component={UserListScreen}
+      options={{ title: "Users" }}
     />
-    <Stack.Screen 
-      name="UsersList" 
-      component={UsersListScreen} 
-      options={{ title: 'Users' }}
-    />
-    <Stack.Screen 
-      name="GroupsList" 
-      component={GroupsListScreen} 
-      options={{ title: 'Groups' }}
+    <Stack.Screen
+      name="GroupsList"
+      component={GroupsListScreen}
+      options={{ title: "Groups" }}
     />
   </Stack.Navigator>
 );
@@ -96,17 +93,17 @@ const AppNavigator = () => {
         // Initialize CometChat
         const initSuccess = await initCometChat();
         if (!initSuccess) {
-          setInitError('Failed to initialize chat service');
+          setInitError("Failed to initialize chat service");
           setIsLoading(false);
           return;
         }
-        
+
         // Check if user is already logged in
         const user = await checkAuthStatus();
         setIsAuthenticated(!!user);
       } catch (error) {
-        console.log('App initialization error:', error);
-        setInitError('An error occurred during initialization');
+        console.log("App initialization error:", error);
+        setInitError("An error occurred during initialization");
       } finally {
         setIsLoading(false);
       }
@@ -143,8 +140,8 @@ const AppNavigator = () => {
 const styles = StyleSheet.create({
   loaderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: COLORS.BACKGROUND,
   },
   loaderText: {
@@ -154,21 +151,21 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
     backgroundColor: COLORS.BACKGROUND,
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.TEXT_PRIMARY,
     marginBottom: 12,
   },
   errorText: {
     fontSize: 16,
     color: COLORS.TEXT_SECONDARY,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
