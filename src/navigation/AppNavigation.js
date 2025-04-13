@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ActivityIndicator, View, Text, StyleSheet } from "react-native";
 
 // Screens
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import HomeScreen from '../screens/HomeScreen';
-import ChatScreen from '../screens/ChatScreen';
-import UserListScreen from '../screens/UserListScreen';
-import GroupsListScreen from '../screens/GroupsListScreen';
-import CalendarScreen from '../screens/CalendarScreen';
-import GamesScreen from '../screens/GamesScreen';
-import CarrerScreen from '../screens/CarrerScreen';
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import HomeScreen from "../screens/HomeScreen";
+import ChatScreen from "../screens/ChatScreen";
+import UsersListScreen from "../screens/UserListScreen";
+import GroupsListScreen from "../screens/GroupsListScreen";
+import CalendarScreen from "../screens/CalendarScreen";
+import GamesScreen from "../screens/GamesScreen";
+import CarrerScreen from "../screens/CarrerScreen";
 
 // Auth Services
-import { initCometChat, checkAuthStatus } from '../services/authService';
+import { initCometChat, checkAuthStatus } from "../services/authService";
 
 // Theme
-import { COLORS } from '../theme/colors';
+import { COLORS } from "../theme/colors";
 
 const Stack = createStackNavigator();
 
@@ -26,17 +26,11 @@ const AuthStack = () => (
   <Stack.Navigator
     screenOptions={{
       headerShown: false,
-      cardStyle: { backgroundColor: '#ffffff' },
+      cardStyle: { backgroundColor: "#ffffff" },
     }}
   >
-    <Stack.Screen 
-      name="Login" 
-      component={LoginScreen} 
-    />
-    <Stack.Screen 
-      name="Register" 
-      component={RegisterScreen}
-    />
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Register" component={RegisterScreen} />
   </Stack.Navigator>
 );
 
@@ -44,69 +38,57 @@ const AppStack = () => (
   <Stack.Navigator
     screenOptions={{
       headerShown: false,
-      cardStyle: { backgroundColor: '#ffffff' },
+      cardStyle: { backgroundColor: "#ffffff" },
     }}
   >
-    <Stack.Screen 
-      name="Home" 
-      component={HomeScreen} 
-    />
-    <Stack.Screen 
-      name="Chat" 
-      component={ChatScreen} 
+    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen
+      name="Chat"
+      component={ChatScreen}
       options={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: '#614EC1',
+          backgroundColor: "#614EC1",
         },
-        headerTintColor: '#ffffff',
+        headerTintColor: "#ffffff",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     />
-    <Stack.Screen 
-      name="UserListScreen" 
-      component={UserListScreen} 
+    <Stack.Screen
+      name="UsersListScreen"
+      component={UsersListScreen}
       options={{
         headerShown: true,
-        title: 'Потребители',
+        title: "Потребители",
         headerStyle: {
-          backgroundColor: '#614EC1',
+          backgroundColor: "#614EC1",
         },
-        headerTintColor: '#ffffff',
+        headerTintColor: "#ffffff",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     />
-    <Stack.Screen 
-      name="GroupsList" 
-      component={GroupsListScreen} 
+    <Stack.Screen
+      name="GroupsList"
+      component={GroupsListScreen}
       options={{
         headerShown: true,
-        title: 'Групи',
+        title: "Групи",
         headerStyle: {
-          backgroundColor: '#614EC1',
+          backgroundColor: "#614EC1",
         },
-        headerTintColor: '#ffffff',
+        headerTintColor: "#ffffff",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     />
-    <Stack.Screen 
-      name="Calendar" 
-      component={CalendarScreen} 
-    />
-    <Stack.Screen 
-      name="Games" 
-      component={GamesScreen} 
-    />
-    <Stack.Screen 
-      name="Career" 
-      component={CarrerScreen} 
-    />
+    <Stack.Screen name="Calendar" component={CalendarScreen} />
+    <Stack.Screen name="Games" component={GamesScreen} />
+    <Stack.Screen name="Career" component={CarrerScreen} />
   </Stack.Navigator>
 );
 
@@ -121,17 +103,17 @@ const AppNavigator = () => {
         // Initialize CometChat
         const initSuccess = await initCometChat();
         if (!initSuccess) {
-          setInitError('Неуспешно инициализиране на чат услугата');
+          setInitError("Неуспешно инициализиране на чат услугата");
           setIsLoading(false);
           return;
         }
-        
+
         // Check if user is already logged in
         const user = await checkAuthStatus();
         setIsAuthenticated(!!user);
       } catch (error) {
-        console.log('App initialization error:', error);
-        setInitError('Възникна грешка при инициализирането');
+        console.log("App initialization error:", error);
+        setInitError("Възникна грешка при инициализирането");
       } finally {
         setIsLoading(false);
       }
@@ -168,32 +150,32 @@ const AppNavigator = () => {
 const styles = StyleSheet.create({
   loaderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
   },
   loaderText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#614EC1',
+    color: "#614EC1",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontWeight: "bold",
+    color: "#000000",
     marginBottom: 12,
   },
   errorText: {
     fontSize: 16,
-    color: '#8E8E93',
-    textAlign: 'center',
+    color: "#8E8E93",
+    textAlign: "center",
   },
 });
 
