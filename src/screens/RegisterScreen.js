@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,19 +7,22 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  StatusBar,
+  SafeAreaView,
   ScrollView,
-} from "react-native";
-import { registerWithCometChat } from "../services/authService";
-import { COLORS } from "../theme/colors";
+} from 'react-native';
+import { registerWithCometChat } from '../services/authService';
 
 const RegisterScreen = ({ navigation }) => {
-  const [uid, setUid] = useState("");
-  const [name, setName] = useState("");
+  const [uid, setUid] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
     if (!uid.trim() || !name.trim()) {
-      Alert.alert("Error", "Please enter both User ID and Name");
+      Alert.alert('Грешка', 'Моля, попълнете всички полета');
       return;
     }
 
@@ -27,158 +30,211 @@ const RegisterScreen = ({ navigation }) => {
     try {
       await registerWithCometChat(uid.trim(), name.trim());
       setIsLoading(false);
-      navigation.replace("HomeScreen");
+      navigation.replace('Home');
     } catch (error) {
       setIsLoading(false);
-      Alert.alert(
-        "Registration Failed",
-        error.message || "Failed to register. Please try again."
-      );
+      Alert.alert('Неуспешна регистрация', error.message || 'Неуспешна регистрация. Моля, опитайте отново.');
     }
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Create Account</Text>
-        <Text style={styles.headerSubtitle}>Join our growing community</Text>
-      </View>
-
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>User ID</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Create a unique User ID"
-            value={uid}
-            onChangeText={setUid}
-            autoCapitalize="none"
-            placeholderTextColor={COLORS.TEXT_SECONDARY}
-          />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.header}>
+          <Text style={styles.appName}>megdan</Text>
         </View>
+        
+        <View style={styles.formContainer}>
+          <Text style={styles.welcomeText}>Създаване на профил</Text>
+          <Text style={styles.subtitleText}>Попълнете данните си</Text>
+          
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Потребителско име</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Въведете потребителско име"
+              placeholderTextColor="#8E8E93"
+              value={uid}
+              onChangeText={setUid}
+              autoCapitalize="none"
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Your Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your display name"
-            value={name}
-            onChangeText={setName}
-            placeholderTextColor={COLORS.TEXT_SECONDARY}
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Име и фамилия</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Въведете име и фамилия"
+              placeholderTextColor="#8E8E93"
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Имейл</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Въведете имейл адрес"
+              placeholderTextColor="#8E8E93"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Парола</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Въведете парола"
+              placeholderTextColor="#8E8E93"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text style={styles.registerButtonText}>Регистрация</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>или</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.loginButtonText}>Вход с имейл</Text>
+          </TouchableOpacity>
+
+          <View style={styles.termsContainer}>
+            <Text style={styles.termsText}>
+              С регистрацията приемам{' '}
+              <Text style={styles.termsLinkText}>Условията за ползване</Text>
+              {' '}и{' '}
+              <Text style={styles.termsLinkText}>Политиката за поверителност</Text>
+            </Text>
+          </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={COLORS.TEXT_LIGHT} />
-          ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.loginLink}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.loginText}>
-            Already have an account? <Text style={styles.linkText}>Login</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.BACKGROUND,
+    backgroundColor: '#ffffff',
   },
-  contentContainer: {
+  scrollContainer: {
     flexGrow: 1,
   },
-  headerContainer: {
-    backgroundColor: COLORS.PRIMARY,
-    padding: 40,
-    paddingTop: 60,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    alignItems: "center",
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+  header: {
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 20,
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: COLORS.TEXT_LIGHT,
-    marginBottom: 10,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: COLORS.TEXT_LIGHT,
-    opacity: 0.8,
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#614EC1',
   },
   formContainer: {
     flex: 1,
     padding: 24,
-    justifyContent: "center",
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 8,
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: '#8E8E93',
+    marginBottom: 30,
   },
   inputContainer: {
     marginBottom: 20,
   },
   inputLabel: {
     fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.TEXT_PRIMARY,
+    fontWeight: '600',
+    color: '#000000',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: COLORS.CARD_BG,
+    backgroundColor: '#F2F2F7',
     borderRadius: 10,
     padding: 16,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: COLORS.BORDER,
-    color: COLORS.TEXT_PRIMARY,
+    color: '#000000',
   },
-  button: {
-    backgroundColor: COLORS.SECONDARY,
+  registerButton: {
+    backgroundColor: '#614EC1',
     borderRadius: 10,
     padding: 16,
-    alignItems: "center",
-    marginTop: 24,
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
   },
-  buttonText: {
-    color: COLORS.TEXT_LIGHT,
+  registerButtonText: {
+    color: '#ffffff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
-  loginLink: {
-    marginTop: 24,
-    alignItems: "center",
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
   },
-  loginText: {
-    color: COLORS.TEXT_PRIMARY,
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  dividerText: {
+    color: '#8E8E93',
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  loginButton: {
+    backgroundColor: '#F2F2F7',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+  },
+  loginButtonText: {
+    color: '#614EC1',
     fontSize: 16,
+    fontWeight: 'bold',
   },
-  linkText: {
-    color: COLORS.PRIMARY,
-    fontWeight: "bold",
+  termsContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  termsText: {
+    color: '#8E8E93',
+    fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  termsLinkText: {
+    color: '#614EC1',
+    fontWeight: '500',
   },
 });
 
