@@ -10,10 +10,10 @@ import {
   StatusBar,
   Image,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { CometChat } from '@cometchat-pro/react-native-chat';
 import { logoutFromCometChat } from '../services/authService';
-import { COLORS, withOpacity } from '../theme/colors';
 
 const HomeScreen = ({ navigation }) => {
   const [conversations, setConversations] = useState([]);
@@ -114,12 +114,51 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const openUsersList = () => {
-    navigation.navigate('UsersList');
-  };
-
-  const openGroupsList = () => {
-    navigation.navigate('GroupsList');
+  // Bachelor program information
+  const bachelorInfo = {
+    title: "Бакалавър по информатика",
+    description: "Програмата осигурява задълбочени познания в областта на компютърните науки, програмирането и информационните технологии. Студентите придобиват умения за разработване на софтуер, анализ на данни и управление на ИТ проекти.",
+    details: [
+      "Продължителност: 4 години (8 семестъра)",
+      "Кредити: 240 ECTS",
+      "Форма на обучение: Редовна/Задочна",
+      "Език на обучение: Български/Английски"
+    ],
+    courses: [
+      "Въведение в програмирането",
+      "Обектно-ориентирано програмиране",
+      "Структури от данни и алгоритми",
+      "Бази данни",
+      "Уеб програмиране",
+      "Изкуствен интелект",
+      "Компютърни мрежи"
+    ],
+    channelName: "Информатика 2023-2027",
+    channelDescription: "Общ канал за всички студенти от програмата по информатика",
+    channelMembers: 128,
+    channelMessages: [
+      {
+        id: "m1",
+        text: "Здравейте колеги! Някой има ли записки от последната лекция по алгоритми?",
+        sender: "Мария Иванова",
+        time: "Днес, 14:25",
+        avatar: "https://randomuser.me/api/portraits/women/33.jpg"
+      },
+      {
+        id: "m2",
+        text: "Аз имам, ще ги кача в споделената папка довечера!",
+        sender: "Георги Петров",
+        time: "Днес, 14:32",
+        avatar: "https://randomuser.me/api/portraits/men/22.jpg"
+      },
+      {
+        id: "m3",
+        text: "Колеги, не забравяйте, че до петък трябва да предадем проектите по ООП.",
+        sender: "Проф. Димитров",
+        time: "Вчера, 16:10",
+        avatar: "https://randomuser.me/api/portraits/men/42.jpg"
+      }
+    ]
   };
 
   // Mocked groups data to match the design
@@ -150,34 +189,7 @@ const HomeScreen = ({ navigation }) => {
       color: '#614EC1',
       online: false,
       isMockData: true
-    },
-    {
-      id: 'g4',
-      name: 'Дизайн принципи',
-      lastMessage: 'Game night tomorrow!',
-      time: 'Yesterday',
-      color: '#74F269',
-      online: false,
-      isMockData: true
-    },
-    {
-      id: 'g5',
-      name: 'Дизайн принципи',
-      lastMessage: 'Game night tomorrow!',
-      time: 'Yesterday',
-      color: '#614EC1',
-      online: false,
-      isMockData: true
-    },
-    {
-      id: 'g6',
-      name: 'Дизайн принципи',
-      lastMessage: 'Game night tomorrow!',
-      time: 'Yesterday',
-      color: '#74F269',
-      online: false,
-      isMockData: true
-    },
+    }
   ];
 
   const handleGroupPress = (item) => {
@@ -191,7 +203,7 @@ const HomeScreen = ({ navigation }) => {
       openChat(matchingConversation);
     } else {
       // Otherwise just use the mock item and navigate to groups
-      openGroupsList();
+      navigation.navigate('GroupsList');
     }
   };
 
@@ -217,6 +229,21 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  const renderMessageItem = ({ item }) => {
+    return (
+      <View style={styles.messageItem}>
+        <Image source={{ uri: item.avatar }} style={styles.messageAvatar} />
+        <View style={styles.messageContent}>
+          <View style={styles.messageHeader}>
+            <Text style={styles.messageSender}>{item.sender}</Text>
+            <Text style={styles.messageTime}>{item.time}</Text>
+          </View>
+          <Text style={styles.messageText}>{item.text}</Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
@@ -234,23 +261,94 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Groups Title */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Моите групи</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Bachelor Program Section */}
+        <View style={styles.programContainer}>
+          <Text style={styles.programTitle}>{bachelorInfo.title}</Text>
+          <Text style={styles.programDescription}>{bachelorInfo.description}</Text>
+          
+          <View style={styles.programDetailsContainer}>
+            {bachelorInfo.details.map((detail, index) => (
+              <View key={index} style={styles.detailItem}>
+                <Text style={styles.detailText}>• {detail}</Text>
+              </View>
+            ))}
+          </View>
+          
+          <View style={styles.courseContainer}>
+            <Text style={styles.courseTitle}>Основни курсове:</Text>
+            <View style={styles.courseList}>
+              {bachelorInfo.courses.map((course, index) => (
+                <View key={index} style={styles.courseTag}>
+                  <Text style={styles.courseTagText}>{course}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      
+        {/* Program Chat Channel */}
+        <View style={styles.channelContainer}>
+          <View style={styles.channelHeader}>
+            <Text style={styles.channelTitle}>
+              {bachelorInfo.channelName}
+            </Text>
+            <Text style={styles.channelMembers}>
+              {bachelorInfo.channelMembers} участници
+            </Text>
+          </View>
+          
+          <Text style={styles.channelDescription}>
+            {bachelorInfo.channelDescription}
+          </Text>
+          
+          <View style={styles.messagesContainer}>
+            <FlatList
+              data={bachelorInfo.channelMessages}
+              renderItem={renderMessageItem}
+              keyExtractor={item => item.id}
+              scrollEnabled={false}
+            />
+          </View>
+          
+          <TouchableOpacity style={styles.viewMoreButton}>
+            <Text style={styles.viewMoreText}>Виж всички съобщения</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Group List */}
-      {loading ? (
-        <ActivityIndicator size="large" color={COLORS.PRIMARY} style={styles.loader} />
-      ) : (
-        <FlatList
-          data={groupsData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderGroupItem}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+        {/* Groups Section */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Моите групи</Text>
+        </View>
+
+        {/* Group List */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#614EC1" style={styles.loader} />
+        ) : (
+          <View>
+            {groupsData.map(item => (
+              <TouchableOpacity 
+                key={item.id}
+                style={styles.groupItem} 
+                onPress={() => handleGroupPress(item)}
+              >
+                <View style={[styles.groupAvatar, { backgroundColor: item.color }]}>
+                  {item.online && <View style={styles.onlineIndicator} />}
+                </View>
+                <View style={styles.groupDetails}>
+                  <View style={styles.groupHeader}>
+                    <Text style={styles.groupName}>{item.name}</Text>
+                    <Text style={styles.timeText}>{item.time}</Text>
+                  </View>
+                  <Text style={styles.lastMessage} numberOfLines={1}>
+                    {item.lastMessage}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -259,6 +357,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    padding: 20,
   },
   header: {
     flexDirection: 'row',
@@ -282,22 +383,149 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
+  // Program Styles
+  programContainer: {
+    backgroundColor: '#F2F2F7',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 25,
+  },
+  programTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 10,
+  },
+  programDescription: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 22,
+    marginBottom: 15,
+  },
+  programDetailsContainer: {
+    marginBottom: 15,
+  },
+  detailItem: {
+    marginBottom: 6,
+  },
+  detailText: {
+    fontSize: 15,
+    color: '#4A4A4A',
+  },
+  courseContainer: {
+    marginTop: 10,
+  },
+  courseTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 12,
+  },
+  courseList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  courseTag: {
+    backgroundColor: '#614EC1',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  courseTagText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  // Channel Styles
+  channelContainer: {
+    backgroundColor: '#F2F2F7',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 25,
+  },
+  channelHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  channelTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  channelMembers: {
+    fontSize: 14,
+    color: '#614EC1',
+    fontWeight: '500',
+  },
+  channelDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+  },
+  messagesContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 15,
+  },
+  messageItem: {
+    flexDirection: 'row',
+    marginBottom: 15,
+  },
+  messageAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+  },
+  messageContent: {
+    flex: 1,
+  },
+  messageHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  messageSender: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000',
+  },
+  messageTime: {
+    fontSize: 12,
+    color: '#8E8E93',
+  },
+  messageText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
+  },
+  viewMoreButton: {
+    backgroundColor: '#614EC1',
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
+  },
+  viewMoreText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  // Groups Styles
   sectionHeader: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    marginVertical: 10,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
   },
   loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContainer: {
-    paddingHorizontal: 20,
+    marginTop: 20,
   },
   groupItem: {
     flexDirection: 'row',
