@@ -9,27 +9,18 @@ import {
   Alert,
   TextInput,
   StatusBar,
+  Image,
+  SafeAreaView,
 } from 'react-native';
 import { CometChat } from '@cometchat-pro/react-native-chat';
-import { COLORS, withOpacity } from '../theme/colors';
+import { logoutFromCometChat } from '../services/authService';
 
-const UsersListScreen = ({ navigation }) => {
+const UserListScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    // Set header options
-    navigation.setOptions({
-      headerStyle: {
-        backgroundColor: COLORS.PRIMARY,
-      },
-      headerTintColor: COLORS.TEXT_LIGHT,
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    });
-    
     fetchUsers();
   }, []);
 
@@ -88,6 +79,18 @@ const UsersListScreen = ({ navigation }) => {
     });
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutFromCometChat();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      Alert.alert('Logout Failed', error.message);
+    }
+  };
+
   const renderItem = ({ item }) => {
     // Don't show the current logged-in user
     const loggedInUser = CometChat.getLoggedinUser();
@@ -114,26 +117,39 @@ const UsersListScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor={COLORS.PRIMARY} barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.appTitle}>megdan</Text>
+        </View>
+        <TouchableOpacity onPress={handleLogout}>
+          <Image 
+            source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }} 
+            style={styles.profileImage} 
+          />
+        </TouchableOpacity>
+      </View>
       
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search for users..."
-          placeholderTextColor={COLORS.TEXT_SECONDARY}
+          placeholder="Търсене на потребители..."
+          placeholderTextColor="#8E8E93"
           value={searchText}
           onChangeText={setSearchText}
           returnKeyType="search"
           onSubmitEditing={searchUsers}
         />
         <TouchableOpacity style={styles.searchButton} onPress={searchUsers}>
-          <Text style={styles.searchButtonText}>Search</Text>
+          <Text style={styles.searchButtonText}>Търси</Text>
         </TouchableOpacity>
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color={COLORS.PRIMARY} style={styles.loader} />
+        <ActivityIndicator size="large" color="#614EC1" style={styles.loader} />
       ) : users.length > 0 ? (
         <FlatList
           data={users}
@@ -146,54 +162,71 @@ const UsersListScreen = ({ navigation }) => {
           <View style={styles.emptyIconContainer}>
             <Text style={styles.emptyIcon}>👥</Text>
           </View>
-          <Text style={styles.emptyText}>No users found</Text>
+          <Text style={styles.emptyText}>Няма намерени потребители</Text>
           {searchText ? (
             <TouchableOpacity style={styles.refreshButton} onPress={fetchUsers}>
-              <Text style={styles.refreshButtonText}>Reset Search</Text>
+              <Text style={styles.refreshButtonText}>Нулиране на търсенето</Text>
             </TouchableOpacity>
           ) : null}
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.BACKGROUND,
+    backgroundColor: '#ffffff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  appTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#614EC1',
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   searchContainer: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: COLORS.CARD_BG,
+    backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: withOpacity(COLORS.BORDER, 0.3),
+    borderBottomColor: '#E0E0E0',
   },
   searchInput: {
     flex: 1,
-    backgroundColor: withOpacity(COLORS.BACKGROUND, 0.5),
+    backgroundColor: '#F2F2F7',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: COLORS.TEXT_PRIMARY,
+    color: '#000000',
     marginRight: 10,
   },
   searchButton: {
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: '#614EC1',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
     borderRadius: 8,
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
   },
   searchButtonText: {
-    color: COLORS.TEXT_LIGHT,
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   loader: {
@@ -206,28 +239,23 @@ const styles = StyleSheet.create({
   },
   userItem: {
     flexDirection: 'row',
-    backgroundColor: COLORS.CARD_BG,
+    backgroundColor: '#F2F2F7',
     padding: 16,
     marginBottom: 10,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   avatar: {
     width: 55,
     height: 55,
     borderRadius: 30,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: '#614EC1',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
   avatarText: {
-    color: COLORS.TEXT_LIGHT,
+    color: '#ffffff',
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -237,7 +265,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: COLORS.TEXT_PRIMARY,
+    color: '#000000',
     marginBottom: 6,
   },
   status: {
@@ -245,10 +273,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   statusOnline: {
-    color: COLORS.ACCENT,
+    color: '#74F269',
   },
   statusOffline: {
-    color: COLORS.TEXT_SECONDARY,
+    color: '#8E8E93',
   },
   emptyContainer: {
     flex: 1,
@@ -257,7 +285,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   emptyIconContainer: {
-    backgroundColor: withOpacity(COLORS.PRIMARY, 0.1),
+    backgroundColor: 'rgba(97, 78, 193, 0.1)',
     width: 100,
     height: 100,
     borderRadius: 50,
@@ -271,20 +299,20 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.TEXT_PRIMARY,
+    color: '#000000',
     marginBottom: 20,
   },
   refreshButton: {
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: '#614EC1',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
   refreshButtonText: {
-    color: COLORS.TEXT_LIGHT,
+    color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
   },
 });
 
-export default UsersListScreen;
+export default UserListScreen;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { ActivityIndicator, View, Text, StyleSheet } from "react-native";
 
 // Screens
@@ -21,7 +22,85 @@ import { initCometChat, checkAuthStatus } from "../services/authService";
 import { COLORS } from "../theme/colors";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
+// Tab Bar Icons
+const getTabBarIcon = (route, focused) => {
+  let iconText;
+  
+  if (route.name === "HomeTab") {
+    iconText = "🏠";
+  } else if (route.name === "CalendarTab") {
+    iconText = "📅";
+  } else if (route.name === "ChatsTab") {
+    iconText = "💬";
+  } else if (route.name === "GamesTab") {
+    iconText = "🎮";
+  } else if (route.name === "CareerTab") {
+    iconText = "💼";
+  }
+  
+  return (
+    <View style={[
+      styles.tabIcon, 
+      route.name === "HomeTab" && styles.homeTabIcon,
+      focused && (route.name === "HomeTab" ? styles.activeHomeTabIcon : styles.activeTabIcon)
+    ]}>
+      <Text style={styles.tabIconText}>{iconText}</Text>
+    </View>
+  );
+};
+
+// Main Tab Navigator
+const MainTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused }) => getTabBarIcon(route, focused),
+        tabBarActiveTintColor: "#614EC1",
+        tabBarInactiveTintColor: "#8E8E93",
+        tabBarStyle: {
+          borderTopWidth: 1,
+          borderTopColor: "#E0E0E0",
+          height: 60,
+          paddingBottom: 5,
+        },
+        tabBarItemStyle: {
+          paddingTop: route.name === "HomeTab" ? 0 : 5,
+        },
+      })}
+    >
+      <Tab.Screen 
+        name="CalendarTab" 
+        component={CalendarScreen} 
+        options={{ tabBarLabel: "Календар" }}
+      />
+      <Tab.Screen 
+        name="ChatsTab" 
+        component={UsersListScreen} 
+        options={{ tabBarLabel: "Разговори" }}
+      />
+      <Tab.Screen 
+        name="HomeTab" 
+        component={HomeScreen} 
+        options={{ tabBarLabel: "Начало" }}
+      />
+      <Tab.Screen 
+        name="GamesTab" 
+        component={GamesScreen} 
+        options={{ tabBarLabel: "Игри" }}
+      />
+      <Tab.Screen 
+        name="CareerTab" 
+        component={CarrerScreen} 
+        options={{ tabBarLabel: "Кариери" }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+// Auth Stack
 const AuthStack = () => (
   <Stack.Navigator
     screenOptions={{
@@ -29,22 +108,31 @@ const AuthStack = () => (
       cardStyle: { backgroundColor: "#ffffff" },
     }}
   >
-    <Stack.Screen name="Login" component={LoginScreen} />
-    <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen 
+      name="Login" 
+      component={LoginScreen} 
+    />
+    <Stack.Screen 
+      name="Register" 
+      component={RegisterScreen}
+    />
   </Stack.Navigator>
 );
 
+// Main App Stack
 const AppStack = () => (
   <Stack.Navigator
     screenOptions={{
       headerShown: false,
-      cardStyle: { backgroundColor: "#ffffff" },
     }}
   >
-    <Stack.Screen name="Home" component={HomeScreen} />
-    <Stack.Screen
-      name="Chat"
-      component={ChatScreen}
+    <Stack.Screen 
+      name="MainTabs" 
+      component={MainTabNavigator} 
+    />
+    <Stack.Screen 
+      name="Chat" 
+      component={ChatScreen} 
       options={{
         headerShown: true,
         headerStyle: {
@@ -56,9 +144,9 @@ const AppStack = () => (
         },
       }}
     />
-    <Stack.Screen
-      name="UsersListScreen"
-      component={UsersListScreen}
+    <Stack.Screen 
+      name="UsersListScreen" 
+      component={UsersListScreen} 
       options={{
         headerShown: true,
         title: "Потребители",
@@ -71,9 +159,9 @@ const AppStack = () => (
         },
       }}
     />
-    <Stack.Screen
-      name="GroupsList"
-      component={GroupsListScreen}
+    <Stack.Screen 
+      name="GroupsList" 
+      component={GroupsListScreen} 
       options={{
         headerShown: true,
         title: "Групи",
@@ -86,12 +174,10 @@ const AppStack = () => (
         },
       }}
     />
-    <Stack.Screen name="Calendar" component={CalendarScreen} />
-    <Stack.Screen name="Games" component={GamesScreen} />
-    <Stack.Screen name="Career" component={CarrerScreen} />
   </Stack.Navigator>
 );
 
+// Main App Navigator
 const AppNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,7 +193,7 @@ const AppNavigator = () => {
           setIsLoading(false);
           return;
         }
-
+        
         // Check if user is already logged in
         const user = await checkAuthStatus();
         setIsAuthenticated(!!user);
@@ -176,6 +262,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#8E8E93",
     textAlign: "center",
+  },
+  tabIcon: {
+    width: 22,
+    height: 22,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeTabIcon: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 11,
+  },
+  homeTabIcon: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 25,
+    marginTop: -15,
+  },
+  activeHomeTabIcon: {
+    backgroundColor: "#614EC1",
+  },
+  tabIconText: {
+    fontSize: 16,
   },
 });
 
